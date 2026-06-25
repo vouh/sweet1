@@ -1,0 +1,420 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sweet1ne - Visual Walkthrough</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = { theme: { extend: { fontFamily: {
+      serif: ['"Iowan Old Style"', 'Palatino', 'Georgia', 'serif'],
+      sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif']
+    } } } };
+  </script>
+  <style>
+    :root {
+      --bg: #f7f1e6; --text: #241c16; --muted: #8a7d6b;
+      --line: #e7dcc8; --surface: #ffffff; --surface-2: #fbf6ec;
+      --accent: #8a2f43; --accent-contrast: #fff; --gold: #9c7320;
+      --shadow: 0 18px 50px rgba(60,40,30,0.14);
+      --glow1: rgba(138,47,67,0.10); --glow2: rgba(156,115,32,0.12);
+    }
+    html, body { height: 100%; }
+    body {
+      margin: 0; color: var(--text); overflow: hidden;
+      font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+      background: radial-gradient(circle at 10% 8%, var(--glow1), transparent 34%), radial-gradient(circle at 90% 6%, var(--glow2), transparent 32%), var(--bg);
+    }
+    .serif { font-family: "Iowan Old Style", Palatino, Georgia, serif; }
+    .txt-gold { color: var(--gold); } .txt-muted { color: var(--muted); } .txt-accent { color: var(--accent); }
+    .eyebrow { letter-spacing: 0.22em; }
+    .bubble { background: var(--surface); border: 1px solid var(--line); border-radius: 20px; box-shadow: var(--shadow); }
+    .soft { background: var(--surface-2); border: 1px solid var(--line); border-radius: 16px; }
+    .btn { display: inline-flex; align-items: center; justify-content: center; border-radius: 999px; font-weight: 700; border: 1px solid transparent; }
+    .btn-accent { background: var(--accent); color: var(--accent-contrast); }
+
+    .stage { position: fixed; inset: 0; }
+    .slide { position: absolute; inset: 0; display: grid; align-content: center; padding: clamp(20px,4vw,56px) clamp(20px,5vw,88px); opacity: 0; visibility: hidden; transform: scale(.985); transition: opacity .5s ease, transform .6s ease, visibility .5s; }
+    .slide.active { opacity: 1; visibility: visible; transform: none; }
+    .reveal { opacity: 0; transform: translateY(20px); }
+    .slide.active .reveal { animation: rise .65s cubic-bezier(.2,.7,.2,1) forwards; animation-delay: var(--d,0s); }
+    @keyframes rise { to { opacity: 1; transform: none; } }
+    .pop { opacity: 0; transform: scale(.94) translateY(8px); }
+    .slide.active .pop { animation: pop .55s cubic-bezier(.2,.8,.2,1) forwards; animation-delay: var(--d,0s); }
+    @keyframes pop { to { opacity: 1; transform: none; } }
+
+    .step-pill { display: inline-block; padding: 6px 14px; border-radius: 999px; background: var(--surface); border: 1px solid var(--line); font-size: 11px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: var(--gold); }
+
+    /* custom / fallback images */
+    .stage-frame { position: relative; border-radius: 26px; overflow: hidden; aspect-ratio: 4/3; background: var(--surface); border: 1px solid var(--line); box-shadow: var(--shadow); }
+    .stage-frame img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .img-fallback { position: absolute; inset: 0; display: grid; place-content: center; gap: 6px; text-align: center; padding: 24px; color: var(--muted); background: linear-gradient(135deg, var(--surface-2), var(--surface)); font-size: 13px; }
+
+    /* journey - modern numbered steps */
+    .journey-track { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; position: relative; }
+    .journey-track::before { content: ""; position: absolute; top: 28px; left: 10%; right: 10%; height: 1px; background: var(--line); z-index: 0; }
+    .j-step { text-align: center; position: relative; z-index: 1; }
+    .j-num { width: 56px; height: 56px; margin: 0 auto 10px; border-radius: 50%; display: grid; place-content: center; font-family: "Iowan Old Style", Palatino, Georgia, serif; font-size: 18px; font-weight: 700; background: var(--surface); border: 2px solid var(--line); color: var(--muted); transition: all .3s; }
+    .j-step:first-child .j-num { border-color: var(--gold); color: var(--gold); box-shadow: 0 0 0 4px var(--glow2); }
+    .j-label { font-family: "Iowan Old Style", Palatino, Georgia, serif; font-size: 14px; }
+    .j-sub { font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+    /* phone mocks */
+    .phone { width: min(310px, 100%); margin: 0 auto; border-radius: 34px; padding: 11px; background: #2a211b; box-shadow: var(--shadow); }
+    .phone-screen { background: var(--bg); border-radius: 24px; overflow: hidden; min-height: 420px; }
+    .mini-row { display: grid; grid-template-columns: 58px 1fr auto; gap: 10px; align-items: center; padding: 10px; border-bottom: 1px solid var(--line); }
+    .mini-thumb { width: 58px; height: 58px; border-radius: 12px; object-fit: cover; }
+    .tag { padding: 3px 8px; border-radius: 999px; background: var(--surface-2); border: 1px solid var(--line); color: var(--muted); font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: .04em; }
+    .tag.gold { background: transparent; border-color: var(--gold); color: var(--gold); }
+    .tag.wine { background: var(--accent); border-color: var(--accent); color: #fff; }
+    .dish-hero { width: 100%; height: 180px; object-fit: cover; }
+    .search-bar { margin: 10px 12px; padding: 10px 14px; border-radius: 999px; background: var(--surface); border: 1px solid var(--line); font-size: 12px; color: var(--muted); }
+
+    /* dashboard mock */
+    .dash { border-radius: 22px; overflow: hidden; border: 1px solid var(--line); box-shadow: var(--shadow); background: var(--surface); }
+    .dash-head { padding: 14px 18px; background: linear-gradient(160deg,#8a2f43,#3a1018); color: #fff; display: flex; justify-content: space-between; align-items: center; }
+    .dash-body { padding: 16px; }
+    .order-card { border: 1px solid var(--line); border-radius: 16px; padding: 14px; background: var(--surface-2); }
+    .order-card.new { border-color: var(--gold); box-shadow: 0 0 0 2px var(--glow2); }
+    .pulse-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); animation: pulse 1.8s ease-out infinite; }
+    @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(138,47,67,.5); } 70% { box-shadow: 0 0 0 10px transparent; } 100% { box-shadow: 0 0 0 0 transparent; } }
+
+    .role-card { border-left: 3px solid var(--gold); }
+    .next-num { width: 36px; height: 36px; border-radius: 50%; display: grid; place-content: center; font-family: "Iowan Old Style", Palatino, Georgia, serif; font-weight: 700; font-size: 15px; background: var(--surface-2); border: 1px solid var(--line); color: var(--gold); margin: 0 auto 10px; }
+  </style>
+</head>
+<body>
+  <div class="fixed top-0 left-0 right-0 h-1 z-50" style="background:var(--line)">
+    <div id="progress" class="h-full transition-all duration-500" style="width:0%;background:var(--gold)"></div>
+  </div>
+
+  <div class="fixed top-3 left-0 right-0 z-40 flex items-center justify-between px-5 md:px-9">
+    <div class="flex items-center gap-2.5">
+      <span class="grid place-content-center w-8 h-8 rounded-lg serif font-bold text-sm" style="background:var(--accent);color:#fff">S</span>
+      <div>
+        <div class="serif font-bold text-sm leading-tight">Sweet1ne</div>
+        <div class="text-[10px] txt-muted tracking-widest font-semibold">GLOBALSOLUTIONS</div>
+      </div>
+    </div>
+    <div class="text-xs txt-muted font-semibold" id="slideName">Introduction</div>
+  </div>
+
+  <main class="stage" id="pitch">
+
+    <!-- 1 INTRODUCTION -->
+    <section class="slide" data-title="Introduction">
+      <div class="grid lg:grid-cols-[1.05fr_0.95fr] gap-12 items-center max-w-6xl mx-auto w-full">
+        <div class="stage-frame pop aspect-[4/5] lg:aspect-[3/4]" style="--d:.1s"
+             data-img="images/landing.png"
+             data-fallback="https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=900&q=70">
+          <div class="img-fallback">
+            <div class="serif text-lg txt-accent">Add image</div>
+            <code>images/landing.png</code>
+          </div>
+        </div>
+        <div class="space-y-5">
+          <div class="reveal eyebrow txt-gold font-extrabold text-xs" style="--d:.05s">PROJECT PROPOSAL</div>
+          <div class="reveal" style="--d:.12s">
+            <h1 class="serif text-5xl md:text-6xl leading-[0.95] mb-3">Visual Menu System</h1>
+            <p class="txt-muted text-lg">For Sweet1ne · Chingford &amp; Lewisham</p>
+          </div>
+          <div class="reveal soft p-4" style="--d:.24s">
+            <p class="text-sm leading-relaxed">We propose a QR-based visual menu — scan at the table, browse on phone, order to staff. No app download.</p>
+          </div>
+          <div class="reveal bubble p-4 flex items-center gap-3" style="--d:.38s">
+            <span class="grid place-content-center w-9 h-9 rounded-lg serif font-bold shrink-0 text-sm" style="background:var(--accent);color:#fff">G</span>
+            <div>
+              <div class="txt-gold font-extrabold text-[10px] tracking-widest">PREPARED BY GLOBALSOLUTIONS</div>
+              <p class="txt-muted text-sm">Walkthrough: table → menu → kitchen</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2 AT THE TABLE -->
+    <section class="slide" data-title="At the Table">
+      <div class="grid lg:grid-cols-[1.1fr_0.9fr] gap-10 items-center max-w-6xl mx-auto w-full">
+        <div class="stage-frame pop" style="--d:.12s" data-img="images/qrcode.png">
+          <div class="img-fallback">
+            <div class="serif text-lg txt-accent">Add image</div>
+            <code>images/qrcode.png</code>
+          </div>
+        </div>
+        <div class="space-y-4">
+          <div class="reveal step-pill" style="--d:.05s">Step 1 · At the table</div>
+          <div class="reveal" style="--d:.1s"><h2 class="serif text-4xl md:text-5xl leading-tight">A QR on every table.</h2></div>
+          <div class="reveal soft p-4" style="--d:.22s"><b class="serif">No app to download</b><p class="txt-muted text-sm mt-1">Guests scan with their phone camera. The menu opens in the browser instantly.</p></div>
+          <div class="reveal soft p-4" style="--d:.34s"><b class="serif">Branch-specific</b><p class="txt-muted text-sm mt-1">Chingford and Lewisham each get their own QR codes and menus.</p></div>
+          <div class="reveal soft p-4" style="--d:.46s"><b class="serif">Premium feel</b><p class="txt-muted text-sm mt-1">A small branded card on the table — clean, modern, on-brand for Sweet1ne.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2 JOURNEY MAP (modern, no emojis) -->
+    <section class="slide" data-title="The Journey">
+      <div class="max-w-5xl mx-auto w-full">
+        <div class="reveal text-center mb-12" style="--d:.05s">
+          <div class="txt-gold font-extrabold text-xs tracking-widest mb-2 eyebrow">THE FULL JOURNEY</div>
+          <h2 class="serif text-4xl md:text-5xl">Five steps. One seamless experience.</h2>
+        </div>
+        <div class="journey-track reveal mb-10" style="--d:.2s">
+          <div class="j-step"><div class="j-num">01</div><div class="j-label">At the table</div><div class="j-sub">Scan QR</div></div>
+          <div class="j-step"><div class="j-num">02</div><div class="j-label">Browse</div><div class="j-sub">See the menu</div></div>
+          <div class="j-step"><div class="j-num">03</div><div class="j-label">Dish detail</div><div class="j-sub">Photos &amp; allergens</div></div>
+          <div class="j-step"><div class="j-num">04</div><div class="j-label">Order</div><div class="j-sub">From the table</div></div>
+          <div class="j-step"><div class="j-num">05</div><div class="j-label">Kitchen</div><div class="j-sub">Staff dashboard</div></div>
+        </div>
+        <p class="reveal txt-muted text-center text-sm max-w-lg mx-auto" style="--d:.4s">The next slides follow this exact path — what your customer sees, then what your staff sees.</p>
+      </div>
+    </section>
+
+    <!-- 3 BROWSE -->
+    <section class="slide" data-title="Browse">
+      <div class="grid lg:grid-cols-[0.9fr_1.1fr] gap-10 items-center max-w-6xl mx-auto w-full">
+        <div class="pop" style="--d:.12s">
+          <div class="phone">
+            <div class="phone-screen">
+              <div class="p-4" style="background:linear-gradient(160deg,#8a2f43,#3a1018);color:#fff">
+                <div class="text-[10px] tracking-widest font-bold" style="opacity:.85">SWEET1NE · CHINGFORD</div>
+                <div class="serif text-xl">Tonight's menu</div>
+              </div>
+              <div class="search-bar">Search halal, vegan, spicy...</div>
+              <div id="miniMenu"></div>
+            </div>
+          </div>
+        </div>
+        <div class="space-y-4">
+          <div class="reveal step-pill" style="--d:.05s">Step 2 · Browse</div>
+          <div class="reveal" style="--d:.1s"><h2 class="serif text-4xl md:text-5xl leading-tight">See the food. Choose with confidence.</h2></div>
+          <div class="reveal soft p-4" style="--d:.22s"><b class="serif">Real photos on every dish</b><p class="txt-muted text-sm mt-1">Guests see exactly what they're ordering — not just a name on paper.</p></div>
+          <div class="reveal soft p-4" style="--d:.34s"><b class="serif">Search &amp; filter</b><p class="txt-muted text-sm mt-1">Halal, vegan, spicy — found in seconds.</p></div>
+          <div class="reveal soft p-4" style="--d:.46s"><b class="serif">Popular badges</b><p class="txt-muted text-sm mt-1">Steer guests toward signature dishes and higher-margin items.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4 DISH DETAIL -->
+    <section class="slide" data-title="Dish Detail">
+      <div class="grid lg:grid-cols-[0.9fr_1.1fr] gap-10 items-center max-w-6xl mx-auto w-full">
+        <div class="pop" style="--d:.12s">
+          <div class="phone">
+            <div class="phone-screen" id="dishDetail"></div>
+          </div>
+        </div>
+        <div class="space-y-4">
+          <div class="reveal step-pill" style="--d:.05s">Step 3 · Tap a dish</div>
+          <div class="reveal" style="--d:.1s"><h2 class="serif text-4xl md:text-5xl leading-tight">Full detail. Every allergen.</h2></div>
+          <div class="reveal soft p-4" style="--d:.22s"><b class="serif">Large photo, clear price</b><p class="txt-muted text-sm mt-1">The dish fills the screen — guests know exactly what they're getting.</p></div>
+          <div class="reveal soft p-4" style="--d:.34s"><b class="serif">Dietary &amp; allergen tags</b><p class="txt-muted text-sm mt-1">Halal, contains nuts, gluten-free — visible before they order.</p></div>
+          <div class="reveal soft p-4" style="--d:.46s"><b class="serif">One tap to add</b><p class="txt-muted text-sm mt-1">Add to order — no waiting for a server to come back.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5 ORDER -->
+    <section class="slide" data-title="Order">
+      <div class="grid lg:grid-cols-[1fr_0.9fr] gap-10 items-center max-w-6xl mx-auto w-full">
+        <div class="space-y-4">
+          <div class="reveal step-pill" style="--d:.05s">Step 4 · Order</div>
+          <div class="reveal" style="--d:.1s"><h2 class="serif text-4xl md:text-5xl leading-tight">Send the order from the table.</h2></div>
+          <div class="reveal soft p-4" style="--d:.22s"><b class="serif">Review before sending</b><p class="txt-muted text-sm mt-1">Guests see every item and the total before they confirm.</p></div>
+          <div class="reveal soft p-4" style="--d:.34s"><b class="serif">Table number included</b><p class="txt-muted text-sm mt-1">Staff know exactly where to deliver — no mix-ups.</p></div>
+          <div class="reveal soft p-4" style="--d:.46s"><b class="serif">Instant delivery to staff</b><p class="txt-muted text-sm mt-1">The moment they tap Place order, the kitchen dashboard lights up.</p></div>
+        </div>
+        <div class="bubble p-6 pop" style="--d:.15s">
+          <div class="flex justify-between items-baseline mb-3"><div class="serif text-lg">Your order</div><span class="tag gold">Table 6</span></div>
+          <div class="flex justify-between py-2 border-b" style="border-color:var(--line)"><span>2 × Jollof Chicken</span><span class="txt-gold font-bold">GBP 27.00</span></div>
+          <div class="flex justify-between py-2 border-b" style="border-color:var(--line)"><span>1 × Plantain Bowl</span><span class="txt-gold font-bold">GBP 10.50</span></div>
+          <div class="flex justify-between py-2 border-b" style="border-color:var(--line)"><span>1 × Zobo Cooler</span><span class="txt-gold font-bold">GBP 4.50</span></div>
+          <div class="flex justify-between pt-3 text-lg font-extrabold"><span>Total</span><span>GBP 42.00</span></div>
+          <button class="btn btn-accent w-full mt-4 py-3">Place order</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6 KITCHEN -->
+    <section class="slide" data-title="Kitchen">
+      <div class="grid lg:grid-cols-[1fr_1fr] gap-10 items-center max-w-6xl mx-auto w-full">
+        <div class="space-y-4">
+          <div class="reveal step-pill" style="--d:.05s">Step 5 · Kitchen</div>
+          <div class="reveal" style="--d:.1s"><h2 class="serif text-4xl md:text-5xl leading-tight">Staff see it instantly.</h2></div>
+          <div class="reveal soft p-4" style="--d:.22s"><b class="serif">New order alert</b><p class="txt-muted text-sm mt-1">Floor staff get a notification the moment a guest places an order.</p></div>
+          <div class="reveal soft p-4" style="--d:.34s"><b class="serif">Approve &amp; serve</b><p class="txt-muted text-sm mt-1">One tap to confirm. No paper tickets, no shouting across the floor.</p></div>
+          <div class="reveal soft p-4" style="--d:.46s"><b class="serif">Managers update the menu live</b><p class="txt-muted text-sm mt-1">Sold out? Mark it unavailable — every phone updates immediately.</p></div>
+        </div>
+        <div class="space-y-4 pop" style="--d:.15s">
+          <div class="stage-frame aspect-[16/10]" data-img="images/kitchen.png"
+               data-fallback="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=800&q=70">
+            <div class="img-fallback"><div class="serif">Add image: <code>images/kitchen.png</code></div><div class="text-xs">Kitchen / service scene</div></div>
+          </div>
+          <div class="dash">
+            <div class="dash-head">
+              <div><div class="text-[10px] tracking-widest opacity-80">STAFF DASHBOARD</div><div class="serif text-lg">Chingford — Live orders</div></div>
+              <div class="flex items-center gap-2 text-xs"><span class="pulse-dot"></span> 1 new</div>
+            </div>
+            <div class="dash-body space-y-3">
+              <div class="order-card new">
+                <div class="flex justify-between items-center mb-2"><span class="tag wine">NEW</span><span class="serif">Table 6</span><span class="txt-muted text-xs">Just now</span></div>
+                <div class="text-sm space-y-1 mb-3"><div>2 × Jollof Chicken</div><div>1 × Plantain Bowl</div><div>1 × Zobo Cooler</div></div>
+                <div class="flex justify-between items-center"><span class="font-bold">GBP 42.00</span><button class="btn btn-accent px-4 py-2 text-sm">Approve</button></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 7 THREE DASHBOARDS -->
+    <section class="slide" data-title="Three Dashboards">
+      <div class="max-w-6xl mx-auto w-full">
+        <div class="reveal text-center mb-8" style="--d:.05s">
+          <div class="txt-gold font-extrabold text-xs tracking-widest mb-2 eyebrow">ROLE-BASED ACCESS</div>
+          <h2 class="serif text-4xl md:text-5xl">Three dashboards. One system.</h2>
+        </div>
+        <div class="grid lg:grid-cols-[1fr_1.2fr_1fr] gap-6 items-stretch">
+          <div class="space-y-4">
+            <div class="reveal bubble p-5 role-card" style="--d:.15s">
+              <div class="txt-gold font-extrabold text-xs tracking-widest mb-2">FLOOR STAFF</div>
+              <div class="serif text-lg mb-1">Orders only</div>
+              <p class="txt-muted text-sm">See and approve incoming orders for their branch. Nothing else — keeps it simple during service.</p>
+            </div>
+            <div class="reveal bubble p-5 role-card" style="--d:.3s">
+              <div class="txt-gold font-extrabold text-xs tracking-widest mb-2">BRANCH ADMIN</div>
+              <div class="serif text-lg mb-1">Menu + analytics</div>
+              <p class="txt-muted text-sm">Manage dishes, prices, photos and availability. View analytics for their branch.</p>
+            </div>
+          </div>
+          <div class="reveal stage-frame pop" style="--d:.2s;aspect-ratio:4/5"
+               data-img="images/dashboard.png"
+               data-fallback="https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=700&q=70">
+            <div class="img-fallback"><div class="serif">Add image: <code>images/dashboard.png</code></div><div class="text-xs">Admin dashboard screenshot</div></div>
+          </div>
+          <div class="reveal bubble p-5 role-card flex flex-col justify-center" style="--d:.45s">
+            <div class="txt-gold font-extrabold text-xs tracking-widest mb-2">MAIN ADMIN</div>
+            <div class="serif text-lg mb-1">Full visibility</div>
+            <p class="txt-muted text-sm mb-4">See every branch, every order, every metric — Chingford and Lewisham from one place.</p>
+            <ul class="txt-muted text-sm space-y-2">
+              <li>All branches &amp; orders</li>
+              <li>Menu management</li>
+              <li>Full analytics</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 8 NEXT STEPS -->
+    <section class="slide" data-title="Next Steps">
+      <div class="max-w-4xl mx-auto text-center">
+        <div class="reveal eyebrow txt-gold font-extrabold text-sm mb-3" style="--d:.05s">SWEET1NE · NEXT STEPS</div>
+        <h2 class="reveal serif text-5xl md:text-6xl mb-3 leading-tight" style="--d:.15s">Ready to go live.</h2>
+        <p class="reveal txt-muted text-lg mb-12" style="--d:.25s">Pilot in one branch first. Measure results. Roll out to the second. ~6–8 weeks from kickoff.</p>
+        <div class="grid sm:grid-cols-2 md:grid-cols-4 gap-4 mb-12">
+          <div class="reveal bubble p-6" style="--d:.35s"><div class="next-num">1</div><div class="serif text-lg mb-1">Pick a branch</div><p class="txt-muted text-sm">Chingford or Lewisham</p></div>
+          <div class="reveal bubble p-6" style="--d:.45s"><div class="next-num">2</div><div class="serif text-lg mb-1">Choose dishes</div><p class="txt-muted text-sm">10–15 to start</p></div>
+          <div class="reveal bubble p-6" style="--d:.55s"><div class="next-num">3</div><div class="serif text-lg mb-1">Photograph &amp; price</div><p class="txt-muted text-sm">Content ready</p></div>
+          <div class="reveal bubble p-6" style="--d:.65s"><div class="next-num">4</div><div class="serif text-lg mb-1">Go live</div><p class="txt-muted text-sm">Pilot begins</p></div>
+        </div>
+        <div class="reveal flex items-center justify-center gap-2 txt-muted text-sm" style="--d:.75s">
+          <span class="grid place-content-center w-6 h-6 rounded serif text-xs font-bold" style="background:var(--accent);color:#fff">S</span>
+          GlobalSolutions · Remote · Smart · Global
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div class="fixed bottom-5 left-1/2 -translate-x-1/2 z-40 flex items-center gap-4 bubble px-4 py-2.5">
+    <button id="prev" class="w-10 h-10 grid place-content-center rounded-full btn-ghost" style="border:1px solid var(--line)" aria-label="Previous">&larr;</button>
+    <div id="dots" class="flex items-center gap-2"></div>
+    <button id="next" class="w-10 h-10 grid place-content-center rounded-full btn-accent" aria-label="Next">&rarr;</button>
+  </div>
+  <div class="fixed bottom-6 right-6 z-40 txt-muted text-xs hidden md:block">Arrow keys · <span id="counter">1 / 9</span></div>
+
+  <script>
+  (function () {
+    "use strict";
+    const U = (id, w) => "https://images.unsplash.com/photo-" + id + "?auto=format&fit=crop&w=" + (w || 400) + "&q=70";
+
+    const DISH = {
+      name: "Jollof Chicken", price: "GBP 13.50", tag: "Popular",
+      img: U("1604908176997-125f25cc6f3d", 600),
+      desc: "Slow-cooked jollof rice with tender spiced chicken, served with plantain and coleslaw.",
+      tags: ["Halal", "Contains nuts", "Spicy"]
+    };
+
+    const MINI = [
+      { name: "Jollof Chicken", price: "GBP 13.50", tag: "Popular", img: U("1604908176997-125f25cc6f3d", 200) },
+      { name: "Suya Beef Skewers", price: "GBP 12.00", tag: "Chef pick", img: U("1529193591184-b1d58069ecdd", 200) },
+      { name: "Plantain Bowl", price: "GBP 10.50", tag: "Veg", img: U("1546069901-ba9599a7e63c", 200) },
+      { name: "Mango Cheesecake", price: "GBP 6.90", tag: "Popular", img: U("1533134242443-d4fd215305ad", 200) }
+    ];
+
+    document.getElementById("miniMenu").innerHTML = MINI.map((d) =>
+      '<div class="mini-row">' +
+        '<img class="mini-thumb" src="' + d.img + '" alt="' + d.name + '">' +
+        '<div><div class="serif" style="font-size:14px">' + d.name + '</div><span class="tag gold">' + d.tag + '</span></div>' +
+        '<div class="txt-gold font-bold text-sm">' + d.price + '</div>' +
+      '</div>'
+    ).join("");
+
+    document.getElementById("dishDetail").innerHTML =
+      '<img class="dish-hero" src="' + DISH.img + '" alt="' + DISH.name + '">' +
+      '<div class="p-4">' +
+        '<div class="flex justify-between items-start mb-2"><div class="serif text-xl">' + DISH.name + '</div><span class="tag wine">' + DISH.tag + '</span></div>' +
+        '<div class="txt-gold font-bold text-lg mb-3">' + DISH.price + '</div>' +
+        '<p class="txt-muted text-sm mb-3">' + DISH.desc + '</p>' +
+        '<div class="flex flex-wrap gap-2 mb-4">' + DISH.tags.map(t => '<span class="tag">' + t + '</span>').join('') + '</div>' +
+        '<button class="btn btn-accent w-full py-3">Add to order</button>' +
+      '</div>';
+
+    // load custom images with unsplash fallback
+    document.querySelectorAll("[data-img]").forEach((frame) => {
+      const custom = frame.getAttribute("data-img");
+      const fallback = frame.getAttribute("data-fallback");
+      const img = new Image();
+      img.onload = () => { const fb = frame.querySelector(".img-fallback"); if (fb) fb.remove(); frame.insertBefore(img, frame.firstChild); };
+      img.onerror = () => { if (fallback) { img.onerror = null; img.src = fallback; } };
+      img.src = custom;
+    });
+
+    const slides = Array.from(document.querySelectorAll(".slide"));
+    const dotsWrap = document.getElementById("dots");
+    const progress = document.getElementById("progress");
+    const counter = document.getElementById("counter");
+    const slideName = document.getElementById("slideName");
+    const prev = document.getElementById("prev");
+    const next = document.getElementById("next");
+    let index = 0;
+
+    slides.forEach((_, i) => {
+      const d = document.createElement("button");
+      d.className = "rounded-full transition-all";
+      d.style.cssText = "width:10px;height:10px;background:var(--line)";
+      d.addEventListener("click", () => show(i));
+      dotsWrap.appendChild(d);
+    });
+    const dots = Array.from(dotsWrap.children);
+
+    function show(i) {
+      index = Math.max(0, Math.min(slides.length - 1, i));
+      slides.forEach((s, n) => s.classList.toggle("active", n === index));
+      dots.forEach((d, n) => { d.style.background = n === index ? "var(--gold)" : "var(--line)"; d.style.width = n === index ? "20px" : "10px"; });
+      progress.style.width = ((index + 1) / slides.length) * 100 + "%";
+      counter.textContent = (index + 1) + " / " + slides.length;
+      slideName.textContent = slides[index].getAttribute("data-title");
+      prev.style.opacity = index === 0 ? 0.4 : 1;
+      next.style.opacity = index === slides.length - 1 ? 0.4 : 1;
+    }
+    prev.addEventListener("click", () => show(index - 1));
+    next.addEventListener("click", () => show(index + 1));
+    document.addEventListener("keydown", (e) => {
+      if (["ArrowRight","PageDown"," "].includes(e.key)) { e.preventDefault(); show(index + 1); }
+      if (["ArrowLeft","PageUp"].includes(e.key)) { e.preventDefault(); show(index - 1); }
+    });
+
+    show(0);
+  })();
+  </script>
+</body>
+</html>
