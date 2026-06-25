@@ -43,6 +43,10 @@
     .slide.active .pop { animation: pop .55s cubic-bezier(.2,.8,.2,1) forwards; animation-delay: var(--d,0s); }
     @keyframes pop { to { opacity: 1; transform: none; } }
 
+    .gs-logo { height: 28px; width: auto; object-fit: contain; display: block; }
+    .gs-logo-md { height: 40px; width: auto; object-fit: contain; display: block; }
+    .gs-logo-sm { height: 22px; width: auto; object-fit: contain; display: block; }
+
     .step-pill { display: inline-block; padding: 6px 14px; border-radius: 999px; background: var(--surface); border: 1px solid var(--line); font-size: 11px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: var(--gold); }
 
     /* custom / fallback images */
@@ -80,7 +84,39 @@
     @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(138,47,67,.5); } 70% { box-shadow: 0 0 0 10px transparent; } 100% { box-shadow: 0 0 0 0 transparent; } }
 
     .role-card { border-left: 3px solid var(--gold); }
-    .next-num { width: 36px; height: 36px; border-radius: 50%; display: grid; place-content: center; font-family: "Iowan Old Style", Palatino, Georgia, serif; font-weight: 700; font-size: 15px; background: var(--surface-2); border: 1px solid var(--line); color: var(--gold); margin: 0 auto 10px; }
+
+    /* kitchen split: chef + dashboard */
+    .kitchen-visual { display: flex; flex-direction: column; gap: 14px; }
+
+    /* next steps — dynamic arrow flow */
+    .next-flow { position: relative; max-width: 820px; margin: 0 auto; perspective: 900px; }
+    .next-path { display: grid; grid-template-columns: 1fr auto 1fr auto 1fr auto 1fr; align-items: center; gap: 6px; }
+    @media (max-width: 768px) {
+      .next-path { grid-template-columns: 1fr 1fr; gap: 12px; }
+      .next-path .arrow-3d { display: none; }
+    }
+    .next-card {
+      background: var(--surface); border: 1px solid var(--line); border-radius: 18px;
+      padding: 18px 14px; text-align: center; box-shadow: var(--shadow);
+      transform: rotateX(4deg) translateZ(0); transition: transform .3s;
+    }
+    .slide.active .next-card:hover { transform: rotateX(0deg) translateY(-4px) translateZ(12px); }
+    .next-card.final { background: linear-gradient(145deg, var(--accent), #5a1a28); color: #fff; border-color: transparent; box-shadow: 0 20px 40px rgba(138,47,67,.28); }
+    .next-card.final .next-num { background: rgba(255,255,255,.2); border-color: rgba(255,255,255,.3); color: #fff; }
+    .next-card.final p { color: rgba(255,255,255,.85); }
+    .next-num { width: 34px; height: 34px; border-radius: 50%; display: grid; place-content: center; font-family: "Iowan Old Style", Palatino, Georgia, serif; font-weight: 700; font-size: 14px; background: var(--surface-2); border: 1px solid var(--line); color: var(--gold); margin: 0 auto 8px; }
+    .arrow-3d {
+      width: 36px; height: 36px; flex-shrink: 0; position: relative;
+      transform: rotate(-45deg) translateZ(20px);
+      filter: drop-shadow(2px 4px 6px rgba(60,40,30,.2));
+    }
+    .arrow-3d::before {
+      content: ""; position: absolute; inset: 0;
+      background: linear-gradient(135deg, var(--gold) 0%, #c9a227 50%, var(--gold) 100%);
+      clip-path: polygon(0 35%, 60% 35%, 60% 0, 100% 50%, 60% 100%, 60% 65%, 0 65%);
+    }
+    .next-tagline { font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--gold); font-weight: 800; margin-top: 6px; }
+    .next-glow { position: absolute; width: 280px; height: 280px; border-radius: 50%; background: var(--glow2); filter: blur(60px); pointer-events: none; z-index: -1; }
   </style>
 </head>
 <body>
@@ -90,10 +126,10 @@
 
   <div class="fixed top-3 left-0 right-0 z-40 flex items-center justify-between px-5 md:px-9">
     <div class="flex items-center gap-2.5">
-      <span class="grid place-content-center w-8 h-8 rounded-lg serif font-bold text-sm" style="background:var(--accent);color:#fff">S</span>
+      <img src="images/logo.png" alt="GlobalSolutions" class="gs-logo">
       <div>
         <div class="serif font-bold text-sm leading-tight">Sweet1ne</div>
-        <div class="text-[10px] txt-muted tracking-widest font-semibold">GLOBALSOLUTIONS</div>
+        <div class="text-[10px] txt-muted tracking-widest font-semibold">Visual walkthrough</div>
       </div>
     </div>
     <div class="text-xs txt-muted font-semibold" id="slideName">Introduction</div>
@@ -122,7 +158,7 @@
             <p class="text-sm leading-relaxed">We propose a QR-based visual menu — scan at the table, browse on phone, order to staff. No app download.</p>
           </div>
           <div class="reveal bubble p-4 flex items-center gap-3" style="--d:.38s">
-            <span class="grid place-content-center w-9 h-9 rounded-lg serif font-bold shrink-0 text-sm" style="background:var(--accent);color:#fff">G</span>
+            <img src="images/logo.png" alt="GlobalSolutions" class="gs-logo-md shrink-0">
             <div>
               <div class="txt-gold font-extrabold text-[10px] tracking-widest">PREPARED BY GLOBALSOLUTIONS</div>
               <p class="txt-muted text-sm">Walkthrough: table → menu → kitchen</p>
@@ -243,10 +279,9 @@
           <div class="reveal soft p-4" style="--d:.34s"><b class="serif">Approve &amp; serve</b><p class="txt-muted text-sm mt-1">One tap to confirm. No paper tickets, no shouting across the floor.</p></div>
           <div class="reveal soft p-4" style="--d:.46s"><b class="serif">Managers update the menu live</b><p class="txt-muted text-sm mt-1">Sold out? Mark it unavailable — every phone updates immediately.</p></div>
         </div>
-        <div class="space-y-4 pop" style="--d:.15s">
-          <div class="stage-frame aspect-[16/10]" data-img="images/kitchen.png"
-               data-fallback="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=800&q=70">
-            <div class="img-fallback"><div class="serif">Add image: <code>images/kitchen.png</code></div><div class="text-xs">Kitchen / service scene</div></div>
+        <div class="kitchen-visual pop max-w-md lg:max-w-none w-full mx-auto lg:mx-0" style="--d:.15s">
+          <div class="stage-frame aspect-[16/11]" data-img="images/chef.png">
+            <div class="img-fallback"><div class="serif">Add image</div><code>images/chef.png</code></div>
           </div>
           <div class="dash">
             <div class="dash-head">
@@ -285,10 +320,8 @@
               <p class="txt-muted text-sm">Manage dishes, prices, photos and availability. View analytics for their branch.</p>
             </div>
           </div>
-          <div class="reveal stage-frame pop" style="--d:.2s;aspect-ratio:4/5"
-               data-img="images/dashboard.png"
-               data-fallback="https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=700&q=70">
-            <div class="img-fallback"><div class="serif">Add image: <code>images/dashboard.png</code></div><div class="text-xs">Admin dashboard screenshot</div></div>
+          <div class="reveal stage-frame pop" style="--d:.2s;aspect-ratio:4/5" data-img="images/dash.png">
+            <div class="img-fallback"><div class="serif">Add image</div><code>images/dash.png</code></div>
           </div>
           <div class="reveal bubble p-5 role-card flex flex-col justify-center" style="--d:.45s">
             <div class="txt-gold font-extrabold text-xs tracking-widest mb-2">MAIN ADMIN</div>
@@ -306,19 +339,44 @@
 
     <!-- 8 NEXT STEPS -->
     <section class="slide" data-title="Next Steps">
-      <div class="max-w-4xl mx-auto text-center">
-        <div class="reveal eyebrow txt-gold font-extrabold text-sm mb-3" style="--d:.05s">SWEET1NE · NEXT STEPS</div>
-        <h2 class="reveal serif text-5xl md:text-6xl mb-3 leading-tight" style="--d:.15s">Ready to go live.</h2>
-        <p class="reveal txt-muted text-lg mb-12" style="--d:.25s">Pilot in one branch first. Measure results. Roll out to the second. ~6–8 weeks from kickoff.</p>
-        <div class="grid sm:grid-cols-2 md:grid-cols-4 gap-4 mb-12">
-          <div class="reveal bubble p-6" style="--d:.35s"><div class="next-num">1</div><div class="serif text-lg mb-1">Pick a branch</div><p class="txt-muted text-sm">Chingford or Lewisham</p></div>
-          <div class="reveal bubble p-6" style="--d:.45s"><div class="next-num">2</div><div class="serif text-lg mb-1">Choose dishes</div><p class="txt-muted text-sm">10–15 to start</p></div>
-          <div class="reveal bubble p-6" style="--d:.55s"><div class="next-num">3</div><div class="serif text-lg mb-1">Photograph &amp; price</div><p class="txt-muted text-sm">Content ready</p></div>
-          <div class="reveal bubble p-6" style="--d:.65s"><div class="next-num">4</div><div class="serif text-lg mb-1">Go live</div><p class="txt-muted text-sm">Pilot begins</p></div>
+      <div class="max-w-5xl mx-auto w-full relative">
+        <div class="next-glow reveal" style="--d:.05s; top:20%; left:50%; transform:translateX(-50%)"></div>
+        <div class="reveal text-center mb-10" style="--d:.05s">
+          <div class="eyebrow txt-gold font-extrabold text-xs mb-2">WHAT HAPPENS NEXT</div>
+          <h2 class="serif text-4xl md:text-5xl leading-tight">Your path to go live.</h2>
+          <p class="txt-muted text-sm mt-3 max-w-md mx-auto">Pilot one branch · measure results · roll out to the second · ~6–8 weeks</p>
         </div>
-        <div class="reveal flex items-center justify-center gap-2 txt-muted text-sm" style="--d:.75s">
-          <span class="grid place-content-center w-6 h-6 rounded serif text-xs font-bold" style="background:var(--accent);color:#fff">S</span>
-          GlobalSolutions · Remote · Smart · Global
+        <div class="next-flow reveal" style="--d:.2s">
+          <div class="next-path">
+            <div class="next-card reveal" style="--d:.3s">
+              <div class="next-num">1</div>
+              <div class="serif text-base mb-0.5">Pick a branch</div>
+              <p class="txt-muted text-xs">Chingford or Lewisham</p>
+            </div>
+            <div class="arrow-3d reveal" style="--d:.38s" aria-hidden="true"></div>
+            <div class="next-card reveal" style="--d:.42s">
+              <div class="next-num">2</div>
+              <div class="serif text-base mb-0.5">Choose dishes</div>
+              <p class="txt-muted text-xs">10–15 to start</p>
+            </div>
+            <div class="arrow-3d reveal" style="--d:.5s" aria-hidden="true"></div>
+            <div class="next-card reveal" style="--d:.54s">
+              <div class="next-num">3</div>
+              <div class="serif text-base mb-0.5">Content ready</div>
+              <p class="txt-muted text-xs">Photos &amp; prices</p>
+            </div>
+            <div class="arrow-3d reveal" style="--d:.62s" aria-hidden="true"></div>
+            <div class="next-card final reveal" style="--d:.66s">
+              <div class="next-num">4</div>
+              <div class="serif text-base mb-0.5">Go live</div>
+              <p class="text-xs">Pilot begins</p>
+              <div class="next-tagline">Start here</div>
+            </div>
+          </div>
+        </div>
+        <div class="reveal flex items-center justify-center gap-2.5 txt-muted text-sm mt-12" style="--d:.78s">
+          <img src="images/logo.png" alt="GlobalSolutions" class="gs-logo-sm">
+          <span>GlobalSolutions · Remote · Smart · Global</span>
         </div>
       </div>
     </section>
