@@ -117,6 +117,8 @@
     }
     .next-tagline { font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--gold); font-weight: 800; margin-top: 6px; }
     .next-glow { position: absolute; width: 280px; height: 280px; border-radius: 50%; background: var(--glow2); filter: blur(60px); pointer-events: none; z-index: -1; }
+
+    #confetti { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 35; }
   </style>
 </head>
 <body>
@@ -338,7 +340,7 @@
     </section>
 
     <!-- 8 NEXT STEPS -->
-    <section class="slide" data-title="Next Steps">
+    <section class="slide" data-title="Next Steps" data-celebrate="true">
       <div class="max-w-5xl mx-auto w-full relative">
         <div class="next-glow reveal" style="--d:.05s; top:20%; left:50%; transform:translateX(-50%)"></div>
         <div class="reveal text-center mb-10" style="--d:.05s">
@@ -381,6 +383,8 @@
       </div>
     </section>
   </main>
+
+  <canvas id="confetti" aria-hidden="true"></canvas>
 
   <div class="fixed bottom-5 left-1/2 -translate-x-1/2 z-40 flex items-center gap-4 bubble px-4 py-2.5">
     <button id="prev" class="w-10 h-10 grid place-content-center rounded-full btn-ghost" style="border:1px solid var(--line)" aria-label="Previous">&larr;</button>
@@ -454,6 +458,76 @@
     });
     const dots = Array.from(dotsWrap.children);
 
+    // golden confetti on final slide
+    const confettiEl = document.getElementById("confetti");
+    const confettiCtx = confettiEl.getContext("2d");
+    let confettiFrame = null;
+    const CONFETTI_COLORS = ["#9c7320", "#c9a227", "#e6c86e", "#d4af37", "#8a2f43", "#b8860b", "#fff8e7"];
+
+    function resizeConfetti() {
+      confettiEl.width = window.innerWidth;
+      confettiEl.height = window.innerHeight;
+    }
+    resizeConfetti();
+    window.addEventListener("resize", resizeConfetti);
+
+    function launchConfetti() {
+      if (confettiFrame) cancelAnimationFrame(confettiFrame);
+      resizeConfetti();
+      const w = confettiEl.width, h = confettiEl.height;
+      const pieces = [];
+      const n = 140;
+      for (let i = 0; i < n; i++) {
+        const fromTop = i < n * 0.55;
+        pieces.push({
+          x: fromTop ? Math.random() * w : w * 0.5 + (Math.random() - 0.5) * w * 0.4,
+          y: fromTop ? -10 - Math.random() * h * 0.3 : h * 0.35 + (Math.random() - 0.5) * 80,
+          w: 5 + Math.random() * 9,
+          h: 3 + Math.random() * 7,
+          color: CONFETTI_COLORS[Math.floor(Math.random() * CONFETTI_COLORS.length)],
+          rot: Math.random() * 360,
+          spin: (Math.random() - 0.5) * 10,
+          vx: (Math.random() - 0.5) * 4,
+          vy: fromTop ? 1.5 + Math.random() * 3.5 : -2 - Math.random() * 4,
+          opacity: 1,
+          shape: Math.random() > 0.35 ? "rect" : "circle"
+        });
+      }
+      const start = performance.now();
+      const duration = 3800;
+
+      function tick(now) {
+        const elapsed = now - start;
+        confettiCtx.clearRect(0, 0, w, h);
+        let alive = false;
+        pieces.forEach((p) => {
+          p.x += p.vx;
+          p.y += p.vy;
+          p.vy += 0.05;
+          p.vx *= 0.995;
+          p.rot += p.spin;
+          if (elapsed > duration * 0.55) p.opacity = Math.max(0, 1 - (elapsed - duration * 0.55) / (duration * 0.45));
+          if (p.y < h + 30 && p.opacity > 0.02) alive = true;
+          confettiCtx.save();
+          confettiCtx.globalAlpha = p.opacity;
+          confettiCtx.fillStyle = p.color;
+          confettiCtx.translate(p.x, p.y);
+          confettiCtx.rotate((p.rot * Math.PI) / 180);
+          if (p.shape === "circle") {
+            confettiCtx.beginPath();
+            confettiCtx.arc(0, 0, p.w * 0.45, 0, Math.PI * 2);
+            confettiCtx.fill();
+          } else {
+            confettiCtx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+          }
+          confettiCtx.restore();
+        });
+        if (elapsed < duration && alive) confettiFrame = requestAnimationFrame(tick);
+        else confettiCtx.clearRect(0, 0, w, h);
+      }
+      confettiFrame = requestAnimationFrame(tick);
+    }
+
     function show(i) {
       index = Math.max(0, Math.min(slides.length - 1, i));
       slides.forEach((s, n) => s.classList.toggle("active", n === index));
@@ -463,6 +537,7 @@
       slideName.textContent = slides[index].getAttribute("data-title");
       prev.style.opacity = index === 0 ? 0.4 : 1;
       next.style.opacity = index === slides.length - 1 ? 0.4 : 1;
+      if (slides[index].hasAttribute("data-celebrate")) setTimeout(launchConfetti, 450);
     }
     prev.addEventListener("click", () => show(index - 1));
     next.addEventListener("click", () => show(index + 1));
